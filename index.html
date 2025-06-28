@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Question Words Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            background: #f8f9fa;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active:hover {
+            background: #45a049;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .question-word {
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #f8f9fa, #e3f2fd);
+            transition: all 0.3s ease;
+        }
+
+        .question-word:hover {
+            border-color: #2196F3;
+            transform: scale(1.02);
+        }
+
+        .japanese {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976D2;
+            margin-bottom: 5px;
+        }
+
+        .romaji {
+            font-size: 18px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .english {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .example {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 8px;
+        }
+
+        .example-japanese {
+            font-size: 18px;
+            color: #e65100;
+            margin-bottom: 5px;
+        }
+
+        .example-romaji {
+            font-size: 14px;
+            color: #bf360c;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .example-english {
+            font-size: 14px;
+            color: #5d4037;
+        }
+
+        .quiz-question {
+            background: #f3e5f5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #9c27b0;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quiz-option {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .quiz-option:hover {
+            border-color: #9c27b0;
+            background: #fce4ec;
+        }
+
+        .quiz-option.selected {
+            background: #9c27b0;
+            color: white;
+            border-color: #9c27b0;
+        }
+
+        .quiz-option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+        }
+
+        /* Fill-in-the-blank quiz styles */
+        .fill-question-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .fill-question-container:hover {
+            border-color: #2196F3;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.1);
+        }
+
+        .fill-question-number {
+            background: #2196F3;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .fill-japanese-sentence {
+            font-size: 24px;
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .fill-romaji-sentence {
+            font-size: 18px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .fill-blank {
+            background: #fff3e0;
+            border: 2px dashed #ff9800;
+            padding: 8px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #e65100;
+        }
+
+        .fill-blank:hover {
+            background: #ffcc02;
+            border-color: #f57c00;
+        }
+
+        .fill-blank.filled {
+            background: #c8e6c9;
+            border-color: #4CAF50;
+            color: #2e7d32;
+        }
+
+        .fill-blank.incorrect {
+            background: #ffcdd2;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .fill-answer-section {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .fill-answer-label {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .fill-answer-text {
+            font-size: 18px;
+            color: #1b5e20;
+            margin-bottom: 5px;
+        }
+
+        .fill-answer-romaji {
+            font-size: 14px;
+            color: #388e3c;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .fill-answer-english {
+            font-size: 14px;
+            color: #4caf50;
+        }
+
+        .fill-options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .fill-option-button {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .fill-option-button:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+        }
+
+        .fill-option-button.selected {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .fill-option-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .fill-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .fill-feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border: 2px solid #4CAF50;
+        }
+
+        .fill-feedback.incorrect {
+            background: #ffcdd2;
+            color: #c62828;
+            border: 2px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗾 Japanese Question Words</h1>
+            <p>Master the art of asking questions in Japanese!</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('learn')">📚 Learn</button>
+                <button class="tab" onclick="showTab('examples')">💡 Examples</button>
+                <button class="tab" onclick="showTab('quiz')">🎯 Quiz</button>
+                <button class="tab" onclick="showTab('fillblank')">✏️ Fill-in-the-Blank</button>
+            </div>
+
+            <!-- Learn Tab -->
+            <div id="learn" class="content active">
+                <h2 style="text-align: center; margin-bottom: 25px; color: #2196F3;">Question Words (疑問詞 - Gimonshi) - 9 Essential Words</h2>
+                
+                <div class="question-word">
+                    <div class="japanese">なに / なん <button class="sound-btn" onclick="playSound('なに')" title="Listen">🔊</button></div>
+                    <div class="romaji">nani / nan</div>
+                    <div class="english">What</div>
+                    <div class="example">
+                        <div class="example-japanese">これは何ですか。<button class="sound-btn" onclick="playSound('これは何ですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Kore wa nan desu ka?</div>
+                        <div class="example-english">What is this?</div>
+                    </div>
+                    <div class="example">
+                        <div class="example-japanese">何を食べますか。<button class="sound-btn" onclick="playSound('何を食べますか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Nani wo tabemasu ka?</div>
+                        <div class="example-english">What will you eat?</div>
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 5px; font-size: 14px;">
+                        <strong>Note:</strong> Use "なん" (nan) before "d", "t", "n" sounds. Use "なに" (nani) in other cases.
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">だれ <button class="sound-btn" onclick="playSound('だれ')" title="Listen">🔊</button></div>
+                    <div class="romaji">dare</div>
+                    <div class="english">Who (casual)</div>
+                    <div class="example">
+                        <div class="example-japanese">あの人は誰ですか。<button class="sound-btn" onclick="playSound('あの人は誰ですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Ano hito wa dare desu ka?</div>
+                        <div class="example-english">Who is that person? (casual)</div>
+                    </div>
+                    <div class="example">
+                        <div class="example-japanese">誰が来ますか。<button class="sound-btn" onclick="playSound('誰が来ますか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Dare ga kimasu ka?</div>
+                        <div class="example-english">Who is coming?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">どなた <button class="sound-btn" onclick="playSound('どなた')" title="Listen">🔊</button></div>
+                    <div class="romaji">donata</div>
+                    <div class="english">Who (polite)</div>
+                    <div class="example">
+                        <div class="example-japanese">あの方はどなたですか。<button class="sound-btn" onclick="playSound('あの方はどなたですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Ano kata wa donata desu ka?</div>
+                        <div class="example-english">Who is that person? (polite)</div>
+                    </div>
+                    <div class="example">
+                        <div class="example-japanese">どなたからお電話ですか。<button class="sound-btn" onclick="playSound('どなたからお電話ですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Donata kara odenwa desu ka?</div>
+                        <div class="example-english">Who is calling? (polite)</div>
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: #e8f5e8; border-radius: 5px; font-size: 14px;">
+                        <strong>Politeness:</strong> Use "どなた" in formal situations, with strangers, or when showing respect. Use "だれ" with friends and family.
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">どこ <button class="sound-btn" onclick="playSound('どこ')" title="Listen">🔊</button></div>
+                    <div class="romaji">doko</div>
+                    <div class="english">Where</div>
+                    <div class="example">
+                        <div class="example-japanese">駅はどこですか。<button class="sound-btn" onclick="playSound('駅はどこですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Eki wa doko desu ka?</div>
+                        <div class="example-english">Where is the station?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">いつ <button class="sound-btn" onclick="playSound('いつ')" title="Listen">🔊</button></div>
+                    <div class="romaji">itsu</div>
+                    <div class="english">When</div>
+                    <div class="example">
+                        <div class="example-japanese">いつ日本に来ましたか。<button class="sound-btn" onclick="playSound('いつ日本に来ましたか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Itsu Nihon ni kimashita ka?</div>
+                        <div class="example-english">When did you come to Japan?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">どうして / なぜ <button class="sound-btn" onclick="playSound('どうして')" title="Listen">🔊</button></div>
+                    <div class="romaji">doushite / naze</div>
+                    <div class="english">Why</div>
+                    <div class="example">
+                        <div class="example-japanese">どうして遅いですか。<button class="sound-btn" onclick="playSound('どうして遅いですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Doushite osoi desu ka?</div>
+                        <div class="example-english">Why are you late?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">どう <button class="sound-btn" onclick="playSound('どう')" title="Listen">🔊</button></div>
+                    <div class="romaji">dou</div>
+                    <div class="english">How</div>
+                    <div class="example">
+                        <div class="example-japanese">日本語はどうですか。<button class="sound-btn" onclick="playSound('日本語はどうですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Nihongo wa dou desu ka?</div>
+                        <div class="example-english">How is Japanese?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">いくら <button class="sound-btn" onclick="playSound('いくら')" title="Listen">🔊</button></div>
+                    <div class="romaji">ikura</div>
+                    <div class="english">How much</div>
+                    <div class="example">
+                        <div class="example-japanese">これはいくらですか。<button class="sound-btn" onclick="playSound('これはいくらですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Kore wa ikura desu ka?</div>
+                        <div class="example-english">How much is this?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <div class="japanese">どれ <button class="sound-btn" onclick="playSound('どれ')" title="Listen">🔊</button></div>
+                    <div class="romaji">dore</div>
+                    <div class="english">Which one</div>
+                    <div class="example">
+                        <div class="example-japanese">どれがあなたのペンですか。<button class="sound-btn" onclick="playSound('どれがあなたのペンですか')" title="Listen">🔊</button></div>
+                        <div class="example-romaji">Dore ga anata no pen desu ka?</div>
+                        <div class="example-english">Which one is your pen?</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Tab -->
+            <div id="examples" class="content">
+                <h2 style="text-align: center; margin-bottom: 25px; color: #2196F3;">Practice Conversations</h2>
+                
+                <div class="question-word">
+                    <h3 style="color: #ff9800; margin-bottom: 15px;">🏪 At a Shop</h3>
+                    <div class="example">
+                        <div class="example-japanese">A: これは何ですか。</div>
+                        <div class="example-romaji">A: Kore wa nan desu ka?</div>
+                        <div class="example-english">A: What is this?</div>
+                        <br>
+                        <div class="example-japanese">B: それは時計です。</div>
+                        <div class="example-romaji">B: Sore wa tokei desu.</div>
+                        <div class="example-english">B: That is a watch.</div>
+                        <br>
+                        <div class="example-japanese">A: いくらですか。</div>
+                        <div class="example-romaji">A: Ikura desu ka?</div>
+                        <div class="example-english">A: How much is it?</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <h3 style="color: #ff9800; margin-bottom: 15px;">🚉 Asking for Directions</h3>
+                    <div class="example">
+                        <div class="example-japanese">A: すみません、銀行はどこですか。</div>
+                        <div class="example-romaji">A: Sumimasen, ginkou wa doko desu ka?</div>
+                        <div class="example-english">A: Excuse me, where is the bank?</div>
+                        <br>
+                        <div class="example-japanese">B: あそこです。</div>
+                        <div class="example-romaji">B: Asoko desu.</div>
+                        <div class="example-english">B: It's over there.</div>
+                    </div>
+                </div>
+
+                <div class="question-word">
+                    <h3 style="color: #ff9800; margin-bottom: 15px;">👥 Meeting Someone</h3>
+                    <div class="example">
+                        <div class="example-japanese">A: あの人はどなたですか。</div>
+                        <div class="example-romaji">A: Ano hito wa donata desu ka?</div>
+                        <div class="example-english">A: Who is that person?</div>
+                        <br>
+                        <div class="example-japanese">B: 田中さんです。</div>
+                        <div class="example-romaji">B: Tanaka-san desu.</div>
+                        <div class="example-english">B: That's Mr./Ms. Tanaka.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div id="quiz" class="content">
+                <h2 style="text-align: center; margin-bottom: 25px; color: #2196F3;">Test Your Knowledge!</h2>
+                <div class="score">Score: <span id="score">0</span>/10</div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                
+                <div id="quiz-container">
+                    <!-- Quiz questions will be generated here -->
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="button" onclick="startQuiz()">Start Quiz</button>
+                    <button class="button" onclick="nextQuestion()" id="nextBtn" style="display: none;">Next Question</button>
+                    <button class="button" onclick="restartQuiz()" id="restartBtn" style="display: none;">Try Again</button>
+                </div>
+            </div>
+
+            <!-- Fill-in-the-Blank Quiz Tab -->
+            <div id="fillblank" class="content">
+                <h2 style="text-align: center; margin-bottom: 25px; color: #2196F3;">Fill in the Question Word</h2>
+                
+                <div style="background: linear-gradient(45deg, #e3f2fd, #f3e5f5); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 5px solid #2196F3;">
+                    <h3 style="color: #1976D2; margin-bottom: 10px;">📝 How to Play:</h3>
+                    <p>Look at each sentence and its answer. Choose the correct Japanese question word that would make sense in the blank to get that answer.</p>
+                    <p><strong>Example:</strong> If the answer is "isu desu" (it's a chair), the question word should be "nan" (what).</p>
+                </div>
+
+                <div style="background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">📊 Your Progress</h3>
+                    <div style="font-size: 24px; margin: 10px 0;">
+                        Score: <span id="fillScore">0</span> / <span id="fillTotal">12</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.3); border-radius: 10px; height: 8px; margin-top: 10px; overflow: hidden;">
+                        <div id="fillProgress" style="background: white; height: 100%; border-radius: 10px; transition: width 0.3s ease; width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="fillblank-quiz-container">
+                    <!-- Fill-in-blank questions will be loaded here -->
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="button" onclick="checkFillAnswers()" id="fillCheckBtn">Check Answers</button>
+                    <button class="button" onclick="showFillAnswers()" id="fillShowBtn" style="display: none;">Show Correct Answers</button>
+                    <button class="button" onclick="resetFillQuiz()">Reset Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let quizStarted = false;
+
+        const quizData = [
+            {
+                question: "How do you say 'What' in Japanese?",
+                options: ["なに/なん", "だれ", "どこ", "いつ"],
+                correct: 0,
+                romaji: ["nani/nan", "dare", "doko", "itsu"]
+            },
+            {
+                question: "これは___ですか。(What is this?)",
+                options: ["だれ", "なん", "どこ", "いくら"],
+                correct: 1,
+                romaji: ["dare", "nan", "doko", "ikura"]
+            },
+            {
+                question: "Which word means 'Where'?",
+                options: ["いつ", "どう", "どこ", "なぜ"],
+                correct: 2,
+                romaji: ["itsu", "dou", "doko", "naze"]
+            },
+            {
+                question: "駅は___ですか。(Where is the station?)",
+                options: ["いつ", "だれ", "どこ", "なに"],
+                correct: 2,
+                romaji: ["itsu", "dare", "doko", "nani"]
+            },
+            {
+                question: "How do you ask 'Who' in Japanese?",
+                options: ["だれ", "どれ", "どう", "どこ"],
+                correct: 0,
+                romaji: ["dare", "dore", "dou", "doko"]
+            },
+            {
+                question: "これは___ですか。(How much is this?)",
+                options: ["どう", "いくら", "いつ", "なぜ"],
+                correct: 1,
+                romaji: ["dou", "ikura", "itsu", "naze"]
+            },
+            {
+                question: "Which word means 'When'?",
+                options: ["いつ", "どれ", "だれ", "どこ"],
+                correct: 0,
+                romaji: ["itsu", "dore", "dare", "doko"]
+            },
+            {
+                question: "___日本に来ましたか。(When did you come to Japan?)",
+                options: ["どこ", "だれ", "いつ", "なに"],
+                correct: 2,
+                romaji: ["doko", "dare", "itsu", "nani"]
+            },
+            {
+                question: "How do you ask 'Why' in Japanese?",
+                options: ["どう", "どうして", "どれ", "どこ"],
+                correct: 1,
+                romaji: ["dou", "doushite", "dore", "doko"]
+            },
+            {
+                question: "日本語は___ですか。(How is Japanese?)",
+                options: ["どう", "だれ", "いくら", "いつ"],
+                correct: 0,
+                romaji: ["dou", "dare", "ikura", "itsu"]
+            }
+        ];
+
+        function showTab(tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected content and activate tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function startQuiz() {
+            quizStarted = true;
+            currentQuestion = 0;
+            score = 0;
+            updateScore();
+            showQuestion();
+            document.querySelector('button[onclick="startQuiz()"]').style.display = 'none';
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= quizData.length) {
+                endQuiz();
+                return;
+            }
+
+            selectedAnswer = null;
+            const question = quizData[currentQuestion];
+            const container = document.getElementById('quiz-container');
+            
+            container.innerHTML = `
+                <div class="quiz-question">
+                    <h3>Question ${currentQuestion + 1} of ${quizData.length}</h3>
+                    <p style="font-size: 18px; margin: 15px 0;">${question.question}</p>
+                    <div class="quiz-options">
+                        ${question.options.map((option, index) => `
+                            <div class="quiz-option" onclick="selectAnswer(${index})">
+                                <div style="font-size: 16px; font-weight: bold;">${option}</div>
+                                <div style="font-size: 12px; color: #666; font-style: italic;">(${question.romaji[index]})</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('nextBtn').style.display = 'none';
+            updateProgress();
+        }
+
+        function selectAnswer(answerIndex) {
+            if (selectedAnswer !== null) return; // Prevent multiple selections
+            
+            selectedAnswer = answerIndex;
+            const question = quizData[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === answerIndex && index !== question.correct) {
+                    option.classList.add('incorrect');
+                } else {
+                    option.style.opacity = '0.5';
+                }
+            });
+
+            if (answerIndex === question.correct) {
+                score++;
+                updateScore();
+            }
+
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function endQuiz() {
+            const container = document.getElementById('quiz-container');
+            const percentage = Math.round((score / quizData.length) * 100);
+            let message = '';
+            
+            if (percentage >= 90) {
+                message = '🎉 Excellent! You\'re a Japanese question master!';
+            } else if (percentage >= 70) {
+                message = '👍 Great job! You have a good understanding!';
+            } else if (percentage >= 50) {
+                message = '📚 Not bad! Keep practicing to improve!';
+            } else {
+                message = '💪 Keep studying! You\'ll get better with practice!';
+            }
+
+            container.innerHTML = `
+                <div class="quiz-question" style="text-align: center;">
+                    <h3>Quiz Complete!</h3>
+                    <p style="font-size: 24px; margin: 20px 0; color: #2196F3;">Final Score: ${score}/${quizData.length} (${percentage}%)</p>
+                    <p style="font-size: 18px; color: #666;">${message}</p>
+                </div>
+            `;
+
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'inline-block';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            quizStarted = false;
+            updateScore();
+            updateProgress();
+            
+            document.getElementById('quiz-container').innerHTML = '';
+            document.querySelector('button[onclick="startQuiz()"]').style.display = 'inline-block';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+        }
+
+        // Fill-in-the-blank quiz functionality
+        const fillQuestionWords = ['なん', 'だれ', 'どこ', 'いつ', 'どうして', 'どう', 'いくら', 'どれ', 'なに', 'どなた'];
+        
+        const fillQuizData = [
+            {
+                sentence: "あれは [ ] ですか。",
+                romaji: "Are wa [ ] desu ka?",
+                answer: "いすです",
+                answerRomaji: "Isu desu",
+                answerEnglish: "It's a chair",
+                correct: "なん",
+                explanation: "Use 'なん' (what) when asking about objects or things"
+            },
+            {
+                sentence: "これは [ ] の本ですか。",
+                romaji: "Kore wa [ ] no hon desu ka?",
+                answer: "かりなさんのです",
+                answerRomaji: "Karina-san no desu",
+                answerEnglish: "It's Karina's",
+                correct: "だれ",
+                explanation: "Use 'だれ' (who) when asking about people or possession"
+            },
+            {
+                sentence: "銀行は [ ] ですか。",
+                romaji: "Ginkou wa [ ] desu ka?",
+                answer: "あそこです",
+                answerRomaji: "Asoko desu",
+                answerEnglish: "It's over there",
+                correct: "どこ",
+                explanation: "Use 'どこ' (where) when asking about locations"
+            },
+            {
+                sentence: "[ ] 日本に来ましたか。",
+                romaji: "[ ] Nihon ni kimashita ka?",
+                answer: "せんしゅうです",
+                answerRomaji: "Senshuu desu",
+                answerEnglish: "Last week",
+                correct: "いつ",
+                explanation: "Use 'いつ' (when) when asking about time"
+            },
+            {
+                sentence: "[ ] 遅いですか。",
+                romaji: "[ ] osoi desu ka?",
+                answer: "でんしゃが来ませんでした",
+                answerRomaji: "Densha ga kimasen deshita",
+                answerEnglish: "The train didn't come",
+                correct: "どうして",
+                explanation: "Use 'どうして' (why) when asking for reasons"
+            },
+            {
+                sentence: "日本語は [ ] ですか。",
+                romaji: "Nihongo wa [ ] desu ka?",
+                answer: "たのしいです",
+                answerRomaji: "Tanoshii desu",
+                answerEnglish: "It's fun",
+                correct: "どう",
+                explanation: "Use 'どう' (how) when asking about condition or opinion"
+            },
+            {
+                sentence: "この時計は [ ] ですか。",
+                romaji: "Kono tokei wa [ ] desu ka?",
+                answer: "さんぜんえんです",
+                answerRomaji: "Sanzen en desu",
+                answerEnglish: "It's 3,000 yen",
+                correct: "いくら",
+                explanation: "Use 'いくら' (how much) when asking about price"
+            },
+            {
+                sentence: "[ ] があなたのかばんですか。",
+                romaji: "[ ] ga anata no kaban desu ka?",
+                answer: "あのあかいのです",
+                answerRomaji: "Ano akai no desu",
+                answerEnglish: "That red one",
+                correct: "どれ",
+                explanation: "Use 'どれ' (which one) when choosing from multiple options"
+            },
+            {
+                sentence: "きのう [ ] をしましたか。",
+                romaji: "Kinou [ ] wo shimashita ka?",
+                answer: "べんきょうしました",
+                answerRomaji: "Benkyou shimashita",
+                answerEnglish: "I studied",
+                correct: "なに",
+                explanation: "Use 'なに' (what) when asking about activities or actions"
+            },
+            {
+                sentence: "きょうは [ ] ようびですか。",
+                romaji: "Kyou wa [ ] youbi desu ka?",
+                answer: "どようびです",
+                answerRomaji: "Doyoubi desu",
+                answerEnglish: "It's Saturday",
+                correct: "なん",
+                explanation: "Use 'なん' (what) when asking about days of the week"
+            },
+            {
+                sentence: "あの人は [ ] ですか。",
+                romaji: "Ano hito wa [ ] desu ka?",
+                answer: "たなかせんせいです",
+                answerRomaji: "Tanaka-sensei desu",
+                answerEnglish: "It's Teacher Tanaka",
+                correct: "どなた",
+                explanation: "Use 'どなた' (donata) - the polite form of 'だれ' - when asking about people respectfully"
+            },
+            {
+                sentence: "パーティーは [ ] ですか。",
+                romaji: "Paatii wa [ ] desu ka?",
+                answer: "がっこうです",
+                answerRomaji: "Gakkou desu",
+                answerEnglish: "At school",
+                correct: "どこ",
+                explanation: "Use 'どこ' (where) when asking about event locations"
+            }
+        ];
+
+        let fillUserAnswers = {};
+        let fillQuizChecked = false;
+
+        function loadFillQuiz() {
+            const container = document.getElementById('fillblank-quiz-container');
+            container.innerHTML = '';
+
+            fillQuizData.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'fill-question-container';
+                questionDiv.innerHTML = `
+                    <div class="fill-question-number">${index + 1}</div>
+                    <div class="fill-japanese-sentence">
+                        ${question.sentence.replace('[ ]', `<span class="fill-blank" id="fill-blank-${index}">[ ]</span>`)}
+                    </div>
+                    <div class="fill-romaji-sentence">${question.romaji}</div>
+                    <div class="fill-answer-section">
+                        <div class="fill-answer-label">Answer:</div>
+                        <div class="fill-answer-text">${question.answer}</div>
+                        <div class="fill-answer-romaji">${question.answerRomaji}</div>
+                        <div class="fill-answer-english">${question.answerEnglish}</div>
+                    </div>
+                    <div class="fill-options-container">
+                        ${fillQuestionWords.map(word => `
+                            <button class="fill-option-button" onclick="selectFillAnswer(${index}, '${word}')">${word}</button>
+                        `).join('')}
+                    </div>
+                    <div class="fill-feedback" id="fill-feedback-${index}" style="display: none;"></div>
+                `;
+                container.appendChild(questionDiv);
+            });
+
+            document.getElementById('fillTotal').textContent = fillQuizData.length;
+            updateFillProgress();
+        }
+
+        function selectFillAnswer(questionIndex, answer) {
+            if (fillQuizChecked) return;
+
+            fillUserAnswers[questionIndex] = answer;
+            
+            // Update blank display
+            const blank = document.getElementById(`fill-blank-${questionIndex}`);
+            blank.textContent = answer;
+            blank.classList.add('filled');
+            
+            // Update button styles
+            const questionContainer = document.querySelectorAll('.fill-question-container')[questionIndex];
+            const buttons = questionContainer.querySelectorAll('.fill-option-button');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === answer) {
+                    btn.classList.add('selected');
+                }
+            });
+
+            updateFillProgress();
+        }
+
+        function checkFillAnswers() {
+            fillQuizChecked = true;
+            let correctCount = 0;
+
+            fillQuizData.forEach((question, index) => {
+                const userAnswer = fillUserAnswers[index];
+                const blank = document.getElementById(`fill-blank-${index}`);
+                const feedback = document.getElementById(`fill-feedback-${index}`);
+                
+                if (userAnswer === question.correct) {
+                    correctCount++;
+                    blank.classList.add('filled');
+                    blank.classList.remove('incorrect');
+                    feedback.className = 'fill-feedback correct';
+                    feedback.textContent = `✓ Correct! ${question.explanation}`;
+                } else {
+                    blank.classList.add('incorrect');
+                    blank.classList.remove('filled');
+                    feedback.className = 'fill-feedback incorrect';
+                    feedback.textContent = `✗ Incorrect. ${question.explanation}`;
+                }
+                
+                feedback.style.display = 'block';
+                
+                // Disable buttons
+                const questionContainer = document.querySelectorAll('.fill-question-container')[index];
+                const buttons = questionContainer.querySelectorAll('.fill-option-button');
+                buttons.forEach(btn => btn.classList.add('disabled'));
+            });
+
+            document.getElementById('fillScore').textContent = correctCount;
+            document.getElementById('fillCheckBtn').style.display = 'none';
+            document.getElementById('fillShowBtn').style.display = 'inline-block';
+            
+            updateFillProgress();
+        }
+
+        function showFillAnswers() {
+            fillQuizData.forEach((question, index) => {
+                const blank = document.getElementById(`fill-blank-${index}`);
+                blank.textContent = question.correct;
+                blank.classList.remove('incorrect');
+                blank.classList.add('filled');
+                
+                const feedback = document.getElementById(`fill-feedback-${index}`);
+                feedback.className = 'fill-feedback correct';
+                feedback.textContent = `✓ Correct answer: ${question.correct} - ${question.explanation}`;
+                feedback.style.display = 'block';
+            });
+        }
+
+        function resetFillQuiz() {
+            fillUserAnswers = {};
+            fillQuizChecked = false;
+            document.getElementById('fillScore').textContent = '0';
+            document.getElementById('fillCheckBtn').style.display = 'inline-block';
+            document.getElementById('fillShowBtn').style.display = 'none';
+            loadFillQuiz();
+        }
+
+        function updateFillProgress() {
+            const answered = Object.keys(fillUserAnswers).length;
+            const total = fillQuizData.length;
+            const percentage = (answered / total) * 100;
+            document.getElementById('fillProgress').style.width = percentage + '%';
+        }
+
+        // Load fill-in-the-blank quiz when page loads
+        window.addEventListener('load', function() {
+            loadFillQuiz();
+        });
+
+        // Text-to-speech functionality
+        function playSound(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP'; // Japanese language
+                utterance.rate = 0.8; // Slightly slower for learning
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                // Try to use a Japanese voice if available
+                const voices = speechSynthesis.getVoices();
+                const japaneseVoice = voices.find(voice => voice.lang.includes('ja'));
+                if (japaneseVoice) {
+                    utterance.voice = japaneseVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech functionality.');
+            }
+        }
+
+        // Load voices when they become available
+        speechSynthesis.onvoiceschanged = function() {
+            // Voices are now loaded
+        };
+    </script>
+</body>
+</html>
